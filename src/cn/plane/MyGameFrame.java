@@ -8,19 +8,19 @@ import java.awt.Image;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
+import com.sun.org.apache.bcel.internal.classfile.Constant;
+
 public class MyGameFrame extends Frame{
 	Image bg = GameUtil.getImage("images/bg.jpg");
-	Image plane = GameUtil.getImage("images/plane.png");
-	int planeX = 100;
-	int planeY = 100;
+	Image planeImg = GameUtil.getImage("images/plane.png");
+	Plane plane = new Plane(planeImg, 150, 150);
 	/**
 	 * 自动调用paint方法
 	 */
 	@Override
 	public void paint(Graphics g) {
 		g.drawImage(bg, 0, 0, null);
-		g.drawImage(plane, planeX, planeY, null);
-		planeX ++;
+		plane.drawSelf(g);
 		
 	}
 	class PaintThread extends Thread{
@@ -36,6 +36,19 @@ public class MyGameFrame extends Frame{
 				e.printStackTrace();
 			}
 			}
+		}
+	}
+	
+	/**
+	 *   添加双缓冲
+	 */
+	private Image offScreenImage = null;
+	public void update(Graphics g) {
+		if(offScreenImage == null) {
+			offScreenImage = this.createImage(500,500);
+			Graphics goff = offScreenImage.getGraphics();
+			paint(goff);
+			g.drawImage(offScreenImage, 0, 0, null);
 		}
 	}
     /**
@@ -58,6 +71,8 @@ public class MyGameFrame extends Frame{
 		});
 		
 		new PaintThread().start();//启动线程
+		
+		
 	}
 	public static void main(String[] args) {
 		MyGameFrame mf = new MyGameFrame();
