@@ -11,16 +11,32 @@ import java.awt.event.WindowEvent;
 public class MyGameFrame extends Frame{
 	Image bg = GameUtil.getImage("images/bg.jpg");
 	Image plane = GameUtil.getImage("images/plane.png");
+	int planeX = 100;
+	int planeY = 100;
+	/**
+	 * 自动调用paint方法
+	 */
 	@Override
 	public void paint(Graphics g) {
-		Color c = g.getColor();
-		Font f = g.getFont();
-		//g.setColor(Color.green);
-		//g.drawLine(100, 100, 300, 300);
-		//g.setColor(c);
 		g.drawImage(bg, 0, 0, null);
-		g.drawImage(plane, 100, 100, null);
+		g.drawImage(plane, planeX, planeY, null);
+		planeX ++;
 		
+	}
+	class PaintThread extends Thread{
+		@Override
+		public void run() {
+			while (true) {
+				System.out.println("huahua!!");
+		       repaint();//重画窗口
+		       try {
+				Thread.sleep(40);
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			}
+		}
 	}
     /**
               * 初始化窗口
@@ -40,6 +56,8 @@ public class MyGameFrame extends Frame{
 				System.exit(0);
 			}
 		});
+		
+		new PaintThread().start();//启动线程
 	}
 	public static void main(String[] args) {
 		MyGameFrame mf = new MyGameFrame();
